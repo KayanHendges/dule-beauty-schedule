@@ -7,44 +7,46 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id       String   @id @default(uuid())
-  username String   @unique
-  email    String   @unique
-  password String
-  modified DateTime @updatedAt
-  created  DateTime @default(now())
+model Business {
+  id                    String                 @id @default(uuid())
+  name                  String                 @unique
+  ownerId               String                 @unique @map("owner_Id")
+  owner                 Professional           @relation(fields: [ownerId], references: [id])
+  modified              DateTime               @updatedAt
+  created               DateTime               @default(now())
+  businessProfessionals BusinessProfessional[]
+  service               Service[]
 
-  UsersProfessionals UserProfessional[]
 
-  @@map("users")
+  @@map("business")
 }
 
 model Professional {
-  id         String   @id @default(uuid())
-  name       String   @unique
-  email      String?
-  profession String?
-  modified   DateTime @updatedAt
-  created    DateTime @default(now())
-
-  UserProfessional UserProfessional[]
-  CustomerNotes    CustomerNotes[]
-  Service          Service[]
+  id                   String                 @id @default(uuid())
+  name                 String
+  email                String                 @unique
+  password             String
+  profession           String?
+  modified             DateTime               @updatedAt
+  created              DateTime               @default(now())
+  business             Business[]
+  customerNotes        CustomerNote[]
+  services             Service[]
+  businessProfessional BusinessProfessional[]
 
   @@map("professionals")
 }
 
-model UserProfessional {
+model BusinessProfessional {
   id             String       @id @default(uuid())
-  userId         String       @map("user_id")
-  user           User         @relation(references: [id], fields: [userId])
+  businessId     String       @map("business_id")
+  business       Business     @relation(references: [id], fields: [businessId])
   professionalId String       @map("professional_id")
   professional   Professional @relation(references: [id], fields: [professionalId])
   modified       DateTime     @updatedAt
   created        DateTime     @default(now())
 
-  @@map("users_professionals")
+  @@map("business_professionals")
 }
 
 model ProviderService {
@@ -64,6 +66,8 @@ model Service {
   comission                Decimal
   defaultDurationInMinutes Int?                     @map("default_duration_in_minutes")
   defaultPrice             Decimal?                 @map("default_price")
+  businessId               String?                  @map("business_id")
+  businessLocal            Business?                @relation(fields: [businessId], references: [id])
   providerServiceId        String                   @map("provider_service_id")
   providerService          ProviderService          @relation(references: [id], fields: [providerServiceId])
   professionalId           String                   @map("professional_Id")
@@ -122,7 +126,7 @@ model CustomerAddress {
   @@map("customers_addresses")
 }
 
-model CustomerNotes {
+model CustomerNote {
 
   id             String       @id @default(uuid())
   description    String
@@ -145,7 +149,7 @@ model Customer {
   modified        DateTime          @updatedAt
   created         DateTime          @default(now())
   customerAddress CustomerAddress[]
-  customerNotes   CustomerNotes[]
+  customerNotes   CustomerNote[]
   serviceCustomer ServiceCustomer[]
   order           Order[]
 
