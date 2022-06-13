@@ -10,8 +10,8 @@ datasource db {
 model Business {
   id                    String                 @id @default(uuid())
   name                  String                 @unique
-  ownerId               String                 @map("owner_Id")
-  owner                 Professional           @relation(fields: [ownerId], references: [id])
+  professionalId        String                 @map("professional_Id")
+  professional          Professional           @relation(fields: [professionalId], references: [id])
   modified              DateTime               @updatedAt
   created               DateTime               @default(now())
   businessProfessionals BusinessProfessional[]

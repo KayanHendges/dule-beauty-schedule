@@ -1,8 +1,8 @@
 import { Business } from "../../entities/Business/Business";
 
-type FindParameter = { id?: string } | { email?: string }
+export type FindBusinessParameter = { id?: string } | { name?: string }
 
 export interface IBusinessRepository {
-    find(FindParameter: FindParameter): Business;
+    find(findBusinessParameter: FindBusinessParameter): Promise<Business>;
     save(business: Business): { id: string };
 }
