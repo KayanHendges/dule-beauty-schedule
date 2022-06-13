@@ -11,15 +11,21 @@ export class PrismaBusinessRepository implements IBusinessRepository {
         })
         .catch(err => { throw new Error(err) })
 
+
+
         return business
     }
 
-    async save(business: Business): { id: string; } {
-        
+    async save(business: Omit<Business, 'modified' | 'created'>): Promise<{ id: string; }> {
+
         const { id } = await prismaClient.business.create({
             data: business
         })
+        .catch(err => { throw new Error(err) })
 
+        if(id){
+            return { id }
+        }
     }
 
 }

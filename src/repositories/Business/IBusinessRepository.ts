@@ -4,5 +4,5 @@ export type FindBusinessParameter = { id?: string } | { name?: string }
 
 export interface IBusinessRepository {
     find(findBusinessParameter: FindBusinessParameter): Promise<Business>;
-    save(business: Business): { id: string };
+    save(business: Omit<Business, 'modified' | 'created'>): Promise<{ id: string }>;
 }
